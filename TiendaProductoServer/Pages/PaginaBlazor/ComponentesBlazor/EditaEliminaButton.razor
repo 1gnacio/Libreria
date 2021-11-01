@@ -1,0 +1,13 @@
+﻿
+@if (EsAdmin)
+            {
+    <input type="button" class="btn btn-danger" value="Eliminar" />
+    <input type="button" class="btn btn-success" value="Editar" />
+            }
+
+
+@code {
+    [Parameter]
+    public bool EsAdmin { get; set; }
+
+}

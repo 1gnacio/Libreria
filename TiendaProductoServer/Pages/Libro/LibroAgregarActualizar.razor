@@ -1,0 +1,323 @@
+﻿@page "/libro/agregar"
+@page "/libro/actualizar/{Id:int}"
+@using Modelos;
+@using Negocios.Repositorio.IRepositorio
+@using TiendaProductoServer.Service.IService;
+@inject ILibroRepositorio LibroRepositorio;
+@inject ILibroImagenRepositorio LibroImagenRepositorio;
+@inject NavigationManager NavigationManager;
+@inject IJSRuntime JsRuntime;
+@inject IArchivoUpload ArchivoUpload;
+
+<div class="row mt-2 mb-5">
+    <h3 class="card-title text-primary mb-3 ml-3">Agregar libro</h3>
+    <div class="col-md-12">
+        <EditForm Model="libroModel" OnValidSubmit="HandleLibro">
+            <DataAnnotationsValidator></DataAnnotationsValidator>
+            @*<ValidationSummary></ValidationSummary>*@
+            <div class="form-group">
+                <label>Nombre</label>
+                <InputText @bind-Value="libroModel.Nombre" class="form-control"></InputText>
+                <ValidationMessage For="() => libroModel.Nombre" />
+            </div>
+            <div class="form-group">
+                <label>Precio Regular</label>
+                <InputNumber @bind-Value="libroModel.PrecioRegular" class="form-control"></InputNumber>
+                <ValidationMessage For="() => libroModel.PrecioRegular" />
+            </div>
+            <div class="form-group">
+                <label>Autor</label>
+                <InputText @bind-Value="libroModel.Autor" class="form-control"></InputText>
+                <ValidationMessage For="() => libroModel.Autor" />
+            </div>
+            <div class="form-group" style="height: 250px">
+                <label>Detalles</label>
+                @*<InputTextArea @bind-Value="libroModel.Detalles" class="form-control"></InputTextArea>*@
+                <BlazoredTextEditor @ref="@QuillHtml" Placeholder="Ingrese los detalles del libro">
+                    <ToolbarContent>
+                        <select class="ql-header">
+                            <option selected=""></option>
+                            <option value="1"></option>
+                            <option value="2"></option>
+                            <option value="3"></option>
+                            <option value="4"></option>
+                            <option value="5"></option>
+                        </select>
+                        <span class="ql-formats">
+                            <button class="ql-bold"></button>
+                            <button class="ql-italic"></button>
+                            <button class="ql-underline"></button>
+                            <button class="ql-strike"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <select class="ql-color"></select>
+                            <select class="ql-background"></select>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-list" value="ordered"></button>
+                            <button class="ql-list" value="bullet"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-link"></button>
+                        </span>
+                    </ToolbarContent>
+                    <EditorContent>
+
+                    </EditorContent>
+                </BlazoredTextEditor>
+            </div>
+            <div class="form-group" style="padding-top: 70px">
+                <InputFile OnChange="HandleImagenUpload" multiple></InputFile>
+                <div class="row">
+                    @if (procesoImagenCargada)
+                    {
+                        <div class="col-md-12">
+                            <span><i class="fa fa-spin fa-spinner"></i>Espere... las imagenes se estan procesando</span>
+                        </div>
+                    }
+                    @if (libroModel.ImagenesUrl != null && libroModel.ImagenesUrl.Count > 0)
+                    {
+                        int contador = 1;
+                        @foreach (var imagenLibro in libroModel.ImagenesUrl)
+                        {
+                            <div class="col-md-2 mt-3">
+                                <div class="libro-imagen" style="background: url('@imagenLibro') 50% 50%">
+                                    <span class="libro-imagen-titulo">@contador</span>
+                                </div>
+                                <button type="button" @onclick="() => EliminarImagen(imagenLibro)" class="btn btn-outline-danger btn-block mt-4">
+                                    Delete
+                                </button>
+                            </div>
+                            contador++;
+                        }
+                    }
+                </div>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary">@Titulo Libro</button>
+                <NavLink href="libro" class="btn btn-secondary">Volver a la lista</NavLink>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    private LibroDto libroModel { get; set; } = new LibroDto();
+
+    private string Titulo { get; set; } = "Agregar";
+
+    private LibroImagenDto libroImagen { get; set; } = new LibroImagenDto();
+
+    private List<string> nombreImagenesEliminada { get; set; } = new List<string>();
+
+    public BlazoredTextEditor QuillHtml { get; set; }
+
+    private bool procesoImagenCargada { get; set; } = false;
+
+    protected async override Task OnInitializedAsync()
+    {
+        if (Id != null)
+        {
+            Titulo = "Actualizar";
+            libroModel = await LibroRepositorio.ObtenerLibro(Id.Value);
+            if (libroModel?.LibroImagen != null)
+            {
+                libroModel.ImagenesUrl = libroModel.LibroImagen.Select(u => u.LibroImagenUrl).ToList();
+            }
+        }
+        else
+        {
+            libroModel = new LibroDto();
+        }
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+        bool loading = true;
+        while (loading)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(libroModel.Detalles))
+                {
+                    await this.QuillHtml.LoadHTMLContent(libroModel.Detalles);
+                }
+                loading = false;
+            }
+            catch
+            {
+
+                await Task.Delay(10);
+                loading = true;
+            }
+        }
+
+        
+    }
+
+    private async Task HandleLibro()
+    {
+        try
+        {
+            var nombreLibroDetalle = await LibroRepositorio.ExisteNombreLibro(libroModel.Nombre, libroModel.Id);
+            if (nombreLibroDetalle != null)
+            {
+                await JsRuntime.ToastrError("Este nombre de libro ya existe");
+                return;
+            }
+
+            if (libroModel.Id != 0 && Titulo == "Actualizar")
+            {
+                //actualizar
+                libroModel.Detalles = await QuillHtml.GetHTML();
+                var resultadoActualizacion = await LibroRepositorio.ActualizarLibro(libroModel.Id, libroModel);
+                if (libroModel.ImagenesUrl != null && libroModel.ImagenesUrl.Any())
+                {
+                    if (nombreImagenesEliminada != null && nombreImagenesEliminada.Any())
+                    {
+                        foreach (var nombreImagenEliminada in nombreImagenesEliminada)
+                        {
+                            var imagenNombre = nombreImagenEliminada.Replace($"ImagenesLibro/", "");
+                            var resultado = ArchivoUpload.EliminarArchivo(imagenNombre);
+                            await LibroImagenRepositorio.EliminarLibroImagenPorImagenUrl(nombreImagenEliminada);
+                        }
+                    }
+                    await AgregarLibroImagen(resultadoActualizacion);
+                }
+                await JsRuntime.ToastrSuccess("Libro actualizado correctamente");
+            }
+            else
+            {
+                //agregar
+                libroModel.Detalles = await QuillHtml.GetHTML();
+                var resultadoAgregar = await LibroRepositorio.AgregarLibro(libroModel);
+                await AgregarLibroImagen(resultadoAgregar);
+                await JsRuntime.ToastrSuccess("Libro agregado correctamente");
+            }
+
+        }
+        catch (Exception e)
+        {
+
+        }
+        NavigationManager.NavigateTo("libro");
+    }
+
+    //public void SetHTML()
+    //{
+    //    if (!string.IsNullOrEmpty(libroModel.Detalles))
+    //    {
+    //        this.QuillHtml.LoadHTMLContent(libroModel.Detalles);
+    //    }
+    //    StateHasChanged();
+    //}
+
+    private async Task HandleImagenUpload(InputFileChangeEventArgs e)
+    {
+        procesoImagenCargada = true;
+        try
+        {
+            var imagenes = new List<string>();
+            if (e.GetMultipleFiles().Count > 0)
+            {
+                foreach (var imagen in e.GetMultipleFiles())
+                {
+                    System.IO.FileInfo archivoInfo = new System.IO.FileInfo(imagen.Name);
+                    if (archivoInfo.Extension.ToLower() == ".jpg" ||
+                        archivoInfo.Extension.ToLower() == ".png" ||
+                        archivoInfo.Extension.ToLower() == ".jpeg")
+                    {
+                        var rutaImagenCargada = await ArchivoUpload.UploadArchivo(imagen);
+                        imagenes.Add(rutaImagenCargada);
+                    }
+                    else
+                    {
+                        await JsRuntime.ToastrError("Por favor selecciona una imagen .jpg, .png o .jpeg");
+                        return;
+                    }
+                }
+                if (imagenes.Any())
+                {
+                    if (libroModel.ImagenesUrl != null && libroModel.ImagenesUrl.Any())
+                    {
+                        if (nombreImagenesEliminada != null && nombreImagenesEliminada.Any())
+                        {
+                            foreach (var nombreImagenEliminada in nombreImagenesEliminada)
+                            {
+                                var imagenNombre = nombreImagenEliminada.Replace($"ImagenesLibro/", "");
+                                var resultado = ArchivoUpload.EliminarArchivo(imagenNombre);
+                                await LibroImagenRepositorio.EliminarLibroImagenPorImagenUrl(nombreImagenEliminada);
+                            }
+                        }
+                        libroModel.ImagenesUrl.AddRange(imagenes);
+                    }
+                    else
+                    {
+                        libroModel.ImagenesUrl = new List<string>();
+                        libroModel.ImagenesUrl.AddRange(imagenes);
+
+                    }
+                }
+                else
+                {
+                    await JsRuntime.ToastrError("Subida de imagenes fallida");
+                    return;
+                }
+            }
+        }
+        catch (Exception er)
+        {
+
+            await JsRuntime.ToastrError(er.Message);
+        }
+        procesoImagenCargada = false;
+    }
+
+    private async Task AgregarLibroImagen(LibroDto libroDetalles)
+    {
+        foreach (var imagenUrl in libroModel.ImagenesUrl)
+        {
+            if (libroModel.LibroImagen == null || libroModel.LibroImagen.Where(x => x.LibroImagenUrl == imagenUrl).Count() == 0)
+            {
+                libroImagen = new LibroImagenDto()
+                {
+                    LibroId = libroDetalles.Id,
+                    LibroImagenUrl = imagenUrl
+                };
+                await LibroImagenRepositorio.AgregarLibroImagen(libroImagen);
+            }
+
+        }
+    }
+
+    internal async Task EliminarImagen(string imagenUrl)
+    {
+        try
+        {
+            var imagenIndex = libroModel.ImagenesUrl.FindIndex(x => x == imagenUrl);
+            var imagenNombre = imagenUrl.Replace($"{NavigationManager.BaseUri}ImagenesLibro/", "");
+            if (libroModel.Id == 0 && Titulo == "Agregar")
+            {
+                var resultado = ArchivoUpload.EliminarArchivo(imagenNombre);
+            }
+            else
+            {
+                nombreImagenesEliminada ??= new List<string>();
+                nombreImagenesEliminada.Add(imagenUrl);
+            }
+            libroModel.ImagenesUrl.RemoveAt(imagenIndex);
+        }
+        catch (Exception e)
+        {
+
+            await JsRuntime.ToastrError(e.Message);
+        }
+    }
+}

@@ -1,0 +1,88 @@
+﻿@page "/libro" 
+@using Modelos;
+@using Negocios.Repositorio.IRepositorio;
+@inject ILibroRepositorio LibroRepositorio
+@inject IJSRuntime JsRuntime;
+@inject TiendaProductoServer.Service.IService.IArchivoUpload ArchivoUpload;
+@inject NavigationManager NavigationManager;
+
+<div class="row mt-4">
+    <div class="col-8">
+        <h4 class="card-title text-primary">Libros</h4>
+    </div>
+    <div class="col-3 offset-1">
+        <NavLink href="libro/agregar" class="btn btn-primary form-control">Agregar nuevo libro</NavLink>
+    </div>
+</div>
+<div class="row mt-4">
+    <div class="col-12">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Precio regular</th>
+                    <th>Autor</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Libros.Any())
+            {
+                    @foreach(var libro in Libros)
+                {
+                    <tr>
+                        <td>@libro.Nombre</td>
+                        <td>@libro.PrecioRegular.ToString()</td>
+                        <td>@libro.Autor</td>
+                        <td>
+                            <NavLink href="@($"libro/actualizar/{libro.Id}")" class="btn btn-primary">Actualizar</NavLink>
+                            <button class="btn btn-danger" @onclick="() => HandleEliminar(libro.Id)">Eliminar</button>
+                        </td>
+                    </tr>
+                }
+            } else
+            {
+                <tr>
+                    <td colspan="5">No hay resultados</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+<ConfirmacionEliminar estaProcesandoComponentePadre="estaProcesando" ConfirmacionChanged="ConfirmarEliminacion_Click"></ConfirmacionEliminar>
+
+@code {
+    private IEnumerable<LibroDto> Libros { get; set; } = new List<LibroDto>();
+    private int? eliminarLibroId { get; set; } = null;
+    private bool estaProcesando { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        Libros = await LibroRepositorio.ObtenerListaLibros();
+    }
+
+    private async Task HandleEliminar(int libroId)
+    {
+        eliminarLibroId = libroId;
+        await JsRuntime.InvokeVoidAsync("MostrarModalConfirmacionEliminar");
+    }
+
+    public async Task ConfirmarEliminacion_Click(bool estaConfirmado)
+    {
+        estaProcesando = true;
+        if(estaConfirmado && eliminarLibroId != null)
+        {
+            LibroDto libro = await LibroRepositorio.ObtenerLibro(eliminarLibroId.Value);
+            foreach (var imagen in libro.LibroImagen)
+            {
+                var imagenNombre = imagen.LibroImagenUrl.Replace($"{NavigationManager.BaseUri}ImagenesLibro/", "");
+                ArchivoUpload.EliminarArchivo(imagenNombre);
+            }
+            await LibroRepositorio.EliminarLibro(eliminarLibroId.Value);
+            await JsRuntime.ToastrSuccess("Libro eliminado exitosamente");
+            Libros = await LibroRepositorio.ObtenerListaLibros();
+        }
+        await JsRuntime.InvokeVoidAsync("OcultarModalConfirmacionEliminar");
+        estaProcesando = false;
+    }
+}

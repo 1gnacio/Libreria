@@ -1,0 +1,105 @@
+﻿@page "/demoTienda";
+@using Modelo;
+<h3>Mostrando libros de tienda</h3>
+<div class="border p-2 mt-2" style="background-color: azure">
+    <h2 class="text-info">Lista de Libros</h2>
+    <span>Libros Seleccionados: @LibroSeleccionado</span>
+    <div class="row container">
+        <div class="col-12 mt-4">
+            <h4 class="text-info">Libros de Tienda</h4>
+        </div>
+        @foreach (var libro in ListaLibros)
+            {
+                <LibroIndividual libro="libro" OnLibroSeleccionadoCheckbox="CambiarConteo"></LibroIndividual>
+            }
+        <div class="col-12 mt-4">
+            <h4 class="text-info">Beneficios de Libro</h4>
+        </div>
+        @foreach (var beneficio in Beneficios)
+            {
+                <BeneficioIndividual OnBeneficioSeleccionado="CambiarBeneficioSeleccionado" Beneficio="beneficio"></BeneficioIndividual>
+            }
+    </div>
+    <div class="col-12">
+        <p class="text-secondary">Beneficio Seleccionado: @BeneficioSeleccionado</p>
+    </div>
+</div>
+
+@code {
+    public int LibroSeleccionado { get; set; } = 0;
+
+    public string BeneficioSeleccionado { get; set; } = "";
+
+    List<LibroBlazor> ListaLibros = new List<LibroBlazor>();
+    List<LibroBeneficios> Beneficios = new List<LibroBeneficios>();
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        ListaLibros.Add(new LibroBlazor()
+        {
+            Id = 101,
+            NombreLibro = "C# Basico",
+            Agotado = true,
+            Precio = 39,
+            LibroTipo = new List<LibroTipo>
+            {
+                new LibroTipo{ Id = 1, Nombre = "Programacion", Valor = "10" },
+                new LibroTipo{ Id = 1, Nombre = "Diseño", Valor = "20" },
+
+            }
+        });
+
+        ListaLibros.Add(new LibroBlazor()
+        {
+            Id = 102,
+            NombreLibro = "C# Avanzado",
+            Agotado = true,
+            Precio = 68,
+            LibroTipo = new List<LibroTipo>
+            {
+                new LibroTipo{ Id = 1, Nombre = "Programacion", Valor = "10" },
+                new LibroTipo{ Id = 1, Nombre = "Diseño", Valor = "20" },
+
+            }
+        });
+
+        Beneficios.Add(new LibroBeneficios
+        {
+            Id = 111,
+            Nombre = "Libro gratis",
+            Descripcion = "Libro gratis por la proxima compra"
+        });
+
+        Beneficios.Add(new LibroBeneficios
+        {
+            Id = 222,
+            Nombre = "Autografo",
+            Descripcion = "Autografo del autor"
+        });
+
+        Beneficios.Add(new LibroBeneficios
+        {
+            Id = 333,
+            Nombre = "Descuento",
+            Descripcion = "Descuento en libros premium"
+        });
+    }
+
+    protected void CambiarConteo(bool estaSeleccionado)
+    {
+        if (estaSeleccionado)
+        {
+            LibroSeleccionado++;
+        }
+        else
+        {
+            LibroSeleccionado--;
+        }
+    }
+
+    protected void CambiarBeneficioSeleccionado(string beneficio)
+    {
+        BeneficioSeleccionado = beneficio;
+    }
+}

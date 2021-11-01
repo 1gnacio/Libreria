@@ -1,0 +1,19 @@
+﻿<div class="border mt-2">
+    <div class="row">
+    <h4 class="text-primary pl-4 pt-2 col-12">
+        Sub Componente Hijo
+    </h4>
+</div>
+    <div class="row">
+    <p class="pl-4 ml-2">Hay un mensaje - @MensajeParaSubComponente</p>
+    <p class="pl-4 ml-2">Numero - @NumeroDesdePadre</p>
+</div>
+</div>
+
+@code {
+    [CascadingParameter(Name ="MensajeDesdePrincipal")]
+    public string MensajeParaSubComponente { get; set; }
+
+    [CascadingParameter(Name = "NumeroDesdePrincipal")]
+    public string NumeroDesdePadre { get; set; }
+}

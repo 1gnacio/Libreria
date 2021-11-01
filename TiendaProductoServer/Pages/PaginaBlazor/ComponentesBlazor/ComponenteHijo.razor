@@ -1,0 +1,49 @@
+﻿@inject IJSRuntime JsRuntime
+
+<div>
+    <div class="alert alert-info">
+        @Titulo
+    </div>
+    <div class="alert alert-success">
+        @if(SegundoChildContent == null)
+        {
+            if(ChildContent == null)
+            {
+                <span>Ups, al parecer no hay contenido</span>
+            } 
+            else
+            {
+                <span>@ChildContent</span>
+            }
+        } 
+        else
+        {
+            <span>@SegundoChildContent</span>
+        }
+        
+    </div>
+    <button class="btn btn-danger" @onclick="MetodoBtnOnClick">Click</button>
+    <SubComponenteHijo></SubComponenteHijo>
+</div>
+@code {
+    [Parameter]
+    public string Titulo { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public RenderFragment SegundoChildContent { get; set; }
+
+    [Parameter]
+    public EventCallback<MouseEventArgs> MetodoBtnOnClick { get; set; }
+
+    [Parameter]
+    public string Mensaje { get; set; }
+
+    public async Task MostrarSuccess()
+    {
+        await JsRuntime.ToastrSuccess("Success esta en camino");
+    }
+
+}

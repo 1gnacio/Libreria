@@ -1,0 +1,51 @@
+﻿@page "/blazorjs"
+@inject IJSRuntime JsRuntime
+
+<h3>BlazorJS</h3>
+
+<div class="row">
+    <button class="btn btn-primary" @onclick="() => ConfirmarCuadro(MensajeConfirmacion)">Confirmar cuadro</button>
+</div>
+<div class="row mt-4">
+    <button class="btn btn-success" @onclick="botonSuccess">Exitoso</button>
+    <button class="btn btn-danger" @onclick="botonError">Fallido</button>
+</div>
+<div class="row mt-4">
+    <button class="btn btn-success" @onclick="botonSuccessSual">Sual exitoso</button>
+    <button class="btn btn-danger" @onclick="botonErrorSual">Sual fallido</button>
+</div>
+<div class="row">
+    @if (ResultadoConfirmacion) 
+    { 
+        <p>Se hizo la confirmacion</p>
+    }
+            else
+            {
+                <p>Confirmacion pendiente</p>
+            }
+</div>
+
+@code {
+    private string MensajeConfirmacion = "Estas seguro de querer hacer click aqui?";
+    private bool ResultadoConfirmacion { get; set; }
+    private async Task ConfirmarCuadro(string mensaje)
+    {
+        ResultadoConfirmacion = await JsRuntime.InvokeAsync<bool>("confirm", mensaje);
+    }
+    private async Task botonSuccess()
+    {
+        await JsRuntime.ToastrSuccess("Mensaje exitoso");
+    }
+    private async Task botonError()
+    {
+        await JsRuntime.ToastrError("Mensaje fallido");
+    }
+    private async Task botonSuccessSual()
+    {
+        await JsRuntime.InvokeVoidAsync("MostrarSual", "success", "Tarea completada con exito");
+    }
+    private async Task botonErrorSual()
+    {
+        await JsRuntime.InvokeVoidAsync("MostrarSual", "error", "Tarea fallida");
+    }
+}

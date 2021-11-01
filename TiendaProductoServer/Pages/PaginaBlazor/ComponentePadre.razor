@@ -1,0 +1,31 @@
+﻿@page "/ComponentePadre"
+<h3>Componente Padre Hijo</h3>
+<CascadingValue Value="@MensajeParaSubComponente" Name="MensajeDesdePrincipal">
+    <CascadingValue Value="@Numero" Name="NumeroDesdePrincipal">
+<ComponenteHijo @ref="compHijo" 
+                MetodoBtnOnClick="MostrarMensaje" Titulo="Primer Componente Hijo" >
+    @*<ChildContent>Contenido mostrado por RenderFragment desde componente principal</ChildContent>*@
+    <SegundoChildContent>Segundo contenido por RenderFragment</SegundoChildContent>
+</ComponenteHijo>
+        </CascadingValue>
+    </CascadingValue>
+<SegundoComponenteHijo placeholder="Placeholder determinado"></SegundoComponenteHijo>
+
+<p><b>@TextoMensaje</b></p>
+
+<div class="row">
+    <button class="btn btn-success" @onclick="() => compHijo.MostrarSuccess()">Mostrar alerta</button>
+</div>
+
+@code {
+    private string MensajeParaSubComponente = "Este es un mensaje desde componente padre";
+    public string Numero { get; set; } = "7";
+    private string TextoMensaje = "";
+    private ComponenteHijo compHijo;
+
+    private void MostrarMensaje(MouseEventArgs e)
+    {
+        TextoMensaje = "Texto desde componente padre";
+    }
+
+}

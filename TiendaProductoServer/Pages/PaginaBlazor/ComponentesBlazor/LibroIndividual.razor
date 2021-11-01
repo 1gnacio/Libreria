@@ -1,0 +1,33 @@
+﻿@using TiendaProductoServer.Modelo;
+
+<div class="bg-light border p-2 col-5 offset-1">
+                    <h4 class="text-secondary">Libro: @libro.Id</h4>
+                    <input type="checkbox" @onchange="CheckboxCambiarLibroSeleccionado" />
+                    @libro.NombreLibro<br />
+                    @libro.Precio.ToString("c")<br />
+                    <input type="checkbox" @bind-value="libro.Agotado" checked="@(libro.Agotado ? "checked" : null )"/>Esta agotado<br />
+                    <span>
+                        Este libro esta: @(libro.Agotado ? "Agotado" : "Disponible")
+                    </span>
+                    @if (!libro.Agotado)
+                {
+                    @foreach (var tipoLibro in libro.LibroTipo)
+                    {
+                        <p>@tipoLibro.Nombre - @tipoLibro.Valor</p>
+                    }
+                }
+
+                    <EditaEliminaButton EsAdmin="false"></EditaEliminaButton>
+                </div>
+@code {
+    [Parameter]
+    public LibroBlazor libro { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> OnLibroSeleccionadoCheckbox { get; set; }
+
+    protected async Task CheckboxCambiarLibroSeleccionado(ChangeEventArgs e)
+    {
+        await OnLibroSeleccionadoCheckbox.InvokeAsync((bool)e.Value);
+    }
+}

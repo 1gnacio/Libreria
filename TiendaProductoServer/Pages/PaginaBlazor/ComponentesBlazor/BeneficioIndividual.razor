@@ -1,0 +1,20 @@
+﻿@using TiendaProductoServer.Modelo;
+<div class="bg-light border p-2 col-5 offset-1" @onclick="(args) => CambiarBeneficioSeleccionado(args, Beneficio.Nombre)">
+    <h4 class="text-secondary">Beneficio: @Beneficio.Id</h4>
+
+    @Beneficio.Nombre<br />
+    @Beneficio.Descripcion<br />
+</div>
+
+@code {
+    [Parameter]
+    public LibroBeneficios Beneficio { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnBeneficioSeleccionado { get; set; }
+
+    protected async Task CambiarBeneficioSeleccionado(MouseEventArgs e, string nombre)
+    {
+        await OnBeneficioSeleccionado.InvokeAsync((string)nombre);
+    }
+}

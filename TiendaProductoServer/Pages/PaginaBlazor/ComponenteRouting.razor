@@ -1,0 +1,21 @@
+﻿@page "/ComponenteRouting"
+@page "/NuevoComponenteRouting"
+@page "/ComponenteRouting/{parametro1}"
+@page "/ComponenteRouting/{parametro1}/{parametro2}"
+
+
+<h3>ComponenteRouting</h3>
+<h4>Parametro 1: @Parametro1</h4>
+<h4>Parametro 2: @Parametro2</h4>
+
+<NavLink class="btn btn-secondary" href="ComponenteAvanzadoRouting?Param1=Programacion&Param2=Blazor">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Enrutamiento en parametro de consulta
+            </NavLink>
+
+@code {
+    [Parameter]
+    public string Parametro1 { get; set; }
+
+    [Parameter]
+    public string Parametro2 { get; set; }
+}

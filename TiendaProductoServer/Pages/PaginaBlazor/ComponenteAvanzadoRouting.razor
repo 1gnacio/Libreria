@@ -1,0 +1,26 @@
+﻿@page "/ComponenteAvanzadoRouting"
+@inject NavigationManager NavigationManager
+
+<h3>ComponenteAvanzadoRouting</h3>
+<h4>Parametro 1: @Param1</h4>
+<h4>Parametro 2: @Param2</h4>
+<p><button class="btn btn-primary" @onclick="CargarParametros">Cargar parametros</button></p>
+<button class="btn btn-primary" @onclick="Retroceder">Retroceder</button>
+
+@code {
+    private string Param1;
+    private string Param2;
+
+    private void CargarParametros()
+    {
+        var absoluteUrl = new Uri(NavigationManager.Uri);
+        var consultaParametros = System.Web.HttpUtility.ParseQueryString(absoluteUrl.Query);
+        Param1 = consultaParametros["Param1"];
+        Param2 = consultaParametros["Param2"];
+    }
+
+    private void Retroceder()
+    {
+        NavigationManager.NavigateTo("ComponenteRouting");
+    }
+}
