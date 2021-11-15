@@ -5,6 +5,7 @@
 @inject IJSRuntime JsRuntime;
 @inject TiendaProductoServer.Service.IService.IArchivoUpload ArchivoUpload;
 @inject NavigationManager NavigationManager;
+@attribute [Authorize(Roles = Comun.SD.RoleAdmin)]
 
 <div class="row mt-4">
     <div class="col-8">

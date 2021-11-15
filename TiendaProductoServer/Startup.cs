@@ -17,6 +17,7 @@ using Negocios.Repositorio.IRepositorio;
 using Negocios.Repositorio;
 using TiendaProductoServer.Service.IService;
 using TiendaProductoServer.Service;
+using Microsoft.AspNetCore.Identity;
 
 namespace TiendaProductoServer
 {
@@ -34,10 +35,11 @@ namespace TiendaProductoServer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<AplicacionDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
+            services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AplicacionDbContext>().AddDefaultTokenProviders().AddDefaultUI();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddScoped<ILibroRepositorio, LibroRepositorio>();
+            services.AddScoped<IDbInitializer, DbInitializer>();
             services.AddScoped<IArchivoUpload, ArchivoUpload>();
             services.AddScoped<ILibroImagenRepositorio, LibroImagenRepositorio>();
 
@@ -50,7 +52,7 @@ namespace TiendaProductoServer
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IDbInitializer dbInitializer)
         {
             if (env.IsDevelopment())
             {
@@ -65,11 +67,14 @@ namespace TiendaProductoServer
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            dbInitializer.Initialize();
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapRazorPages();
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });

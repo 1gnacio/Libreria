@@ -116,9 +116,17 @@
     public BlazoredTextEditor QuillHtml { get; set; }
 
     private bool procesoImagenCargada { get; set; } = false;
+    [CascadingParameter]
+    public Task<AuthenticationState> authenticationState { get; set; }
 
     protected async override Task OnInitializedAsync()
     {
+        var authenticationState = await this.authenticationState;
+        if (!authenticationState.User.IsInRole(Comun.SD.RoleAdmin))
+        {
+            var uri = new Uri(NavigationManager.Uri);
+            NavigationManager.NavigateTo($"/Identity/Account/Login?returnUrl={uri.LocalPath}");
+        }
         if (Id != null)
         {
             Titulo = "Actualizar";
@@ -159,7 +167,7 @@
             }
         }
 
-        
+
     }
 
     private async Task HandleLibro()

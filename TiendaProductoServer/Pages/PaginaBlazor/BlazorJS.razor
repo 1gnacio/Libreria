@@ -1,5 +1,6 @@
 ﻿@page "/blazorjs"
 @inject IJSRuntime JsRuntime
+@attribute [Authorize(Roles = Comun.SD.RoleAdmin)]
 
 <h3>BlazorJS</h3>
 
