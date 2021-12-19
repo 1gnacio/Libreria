@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AccesoDatos.Data
 {
-    public class AplicacionDbContext : IdentityDbContext
+    public class AplicacionDbContext : IdentityDbContext<AplicacionUser>
     {
         public AplicacionDbContext(DbContextOptions<AplicacionDbContext> options) : base(options)
         {
