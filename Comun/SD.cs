@@ -11,6 +11,7 @@ namespace Comun
         public const string RoleAdmin = "Admin";
         public const string RoleCliente = "Cliente";
         public const string RoleEmpleado = "Empleado";
+        public const string Local_AutorInicial = "AutorLibroInicial";
 
     }
 }

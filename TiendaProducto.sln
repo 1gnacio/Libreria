@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Negocios", "Negocios\Negoci
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Modelos", "Modelos\Modelos.csproj", "{AE477D1B-4400-430E-94EF-C4D8362C8160}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TiendaProductoAPI", "TiendaProductoAPI\TiendaProductoAPI.csproj", "{990EF244-43BB-456B-82F7-459F0BAB1FAA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TiendaProductoAPI", "TiendaProductoAPI\TiendaProductoAPI.csproj", "{990EF244-43BB-456B-82F7-459F0BAB1FAA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TiendaProductoCliente", "TiendaProductoCliente\TiendaProductoCliente.csproj", "{A17FDC36-A355-486E-A54A-7DBEA132EE22}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{990EF244-43BB-456B-82F7-459F0BAB1FAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{990EF244-43BB-456B-82F7-459F0BAB1FAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{990EF244-43BB-456B-82F7-459F0BAB1FAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A17FDC36-A355-486E-A54A-7DBEA132EE22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A17FDC36-A355-486E-A54A-7DBEA132EE22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A17FDC36-A355-486E-A54A-7DBEA132EE22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A17FDC36-A355-486E-A54A-7DBEA132EE22}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
