@@ -16,7 +16,7 @@ namespace Negocios.Mapper
             CreateMap<LibroDto, Libro>();
             CreateMap<Libro, LibroDto>();
             CreateMap<LibroImagen, LibroImagenDto>().ReverseMap();
-
+            CreateMap<LibroPedidosDetalle, LibroPedidosDetalleDto>().ReverseMap();
         }
     }
 }

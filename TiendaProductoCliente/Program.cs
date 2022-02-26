@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using TiendaProductoCliente.Service;
+using TiendaProductoCliente.Service.IService;
 
 namespace TiendaProductoCliente
 {
@@ -18,8 +20,10 @@ namespace TiendaProductoCliente
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
 
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.Configuration.GetValue<string>("BaseAPIUrl")) });
             builder.Services.AddBlazoredLocalStorage();
+            builder.Services.AddScoped<ILibroService, LibroService>();
+            builder.Services.AddScoped<ILibroPedidosDetalleService, LibroPedidosDetalleService>();
             await builder.Build().RunAsync();
         }
     }

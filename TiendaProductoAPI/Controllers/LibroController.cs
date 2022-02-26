@@ -22,9 +22,17 @@ namespace TiendaProductoAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetLibros()
+        public async Task<IActionResult> GetLibros(string autor = null)
         {
-            var allLibros = await _libroRepositorio.ObtenerListaLibros();
+            if (string.IsNullOrEmpty(autor))
+            {
+                return BadRequest(new ErrorModel()
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    ErrorMensaje = "El parametro autor debe estar rellenado"
+                });
+            }
+            var allLibros = await _libroRepositorio.ObtenerListaLibros(autor);
             return Ok(allLibros);
         }
 
@@ -40,6 +48,8 @@ namespace TiendaProductoAPI.Controllers
                     StatusCode = StatusCodes.Status400BadRequest
                 });
             }
+
+            
 
             var libroDetalles = await _libroRepositorio.ObtenerLibro(libroId.Value);
 

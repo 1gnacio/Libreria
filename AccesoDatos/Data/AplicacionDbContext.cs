@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace AccesoDatos.Data
 {
-    public class AplicacionDbContext : IdentityDbContext<AplicacionUser>
+    public class AplicacionDbContext : IdentityDbContext<IdentityUser>
     {
         public AplicacionDbContext(DbContextOptions<AplicacionDbContext> options) : base(options)
         {
@@ -17,5 +18,7 @@ namespace AccesoDatos.Data
 
         public DbSet<Libro> Libro { get; set; }
         public DbSet<LibroImagen> LibroImagen { get; set; }
+        public DbSet<AplicacionUser> AplicacionUser { get; set; }
+        public DbSet<LibroPedidosDetalle> LibroPedidosDetalle { get; set; }
     }
 }

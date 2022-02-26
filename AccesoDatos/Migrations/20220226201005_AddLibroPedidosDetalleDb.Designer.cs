@@ -4,14 +4,16 @@ using AccesoDatos.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AccesoDatos.Migrations
 {
     [DbContext(typeof(AplicacionDbContext))]
-    partial class AplicacionDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220226201005_AddLibroPedidosDetalleDb")]
+    partial class AddLibroPedidosDetalleDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

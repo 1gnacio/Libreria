@@ -17,7 +17,7 @@ namespace Negocios.Repositorio.IRepositorio
 
         public Task<int> EliminarLibro(int libroId);
 
-        public Task<IEnumerable<LibroDto>> ObtenerListaLibros();
+        public Task<IEnumerable<LibroDto>> ObtenerListaLibros(string autor = null);
 
         public Task<LibroDto> ExisteNombreLibro(string nombre, int libroId = 0);
 

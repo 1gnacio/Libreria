@@ -105,12 +105,20 @@ namespace Negocios.Repositorio
             }
         }
 
-        public async Task<IEnumerable<LibroDto>> ObtenerListaLibros()
+        public async Task<IEnumerable<LibroDto>> ObtenerListaLibros(string autorStr)
         {
             try
             {
-                IEnumerable<LibroDto> libroDtos = _mapper.Map<IEnumerable<Libro>, IEnumerable<LibroDto>>(await _db.Libro.Include(x => x.LibroImagen).ToListAsync());
-                return libroDtos;
+                if(autorStr == null)
+                {
+                    IEnumerable<LibroDto> libroDtos = _mapper.Map<IEnumerable<Libro>, IEnumerable<LibroDto>>(await _db.Libro.Include(x => x.LibroImagen).ToListAsync());
+                    return libroDtos;
+                }
+                else
+                {
+                    IEnumerable<LibroDto> libroDtos = _mapper.Map<IEnumerable<Libro>, IEnumerable<LibroDto>>(await _db.Libro.Where(x => x.Autor == autorStr).Include(x => x.LibroImagen).ToListAsync());
+                    return libroDtos;
+                }
             }
             catch (Exception e)
             {

@@ -67,6 +67,7 @@ namespace TiendaProductoAPI
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddScoped<ILibroRepositorio, LibroRepositorio>();
+            services.AddScoped<ILibroPedidosDetalleRepositorio, LibroPedidosDetalleRepositorio>();
             services.AddScoped<ILibroImagenRepositorio, LibroImagenRepositorio>();
             services.AddCors(o => o.AddPolicy("TiendaProducto", builder =>
             {

@@ -4,14 +4,16 @@ using AccesoDatos.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AccesoDatos.Migrations
 {
     [DbContext(typeof(AplicacionDbContext))]
-    partial class AplicacionDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220226193902_AddIdentityAndAplicacionUser")]
+    partial class AddIdentityAndAplicacionUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -69,51 +71,6 @@ namespace AccesoDatos.Migrations
                     b.HasIndex("LibroId");
 
                     b.ToTable("LibroImagen");
-                });
-
-            modelBuilder.Entity("AccesoDatos.Data.LibroPedidosDetalle", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("CostoTotal")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("LibroId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PagoRealizado")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Phone")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StripeSessionId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LibroId");
-
-                    b.ToTable("LibroPedidosDetalle");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -332,17 +289,6 @@ namespace AccesoDatos.Migrations
                 {
                     b.HasOne("AccesoDatos.Data.Libro", "Libro")
                         .WithMany("LibroImagen")
-                        .HasForeignKey("LibroId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Libro");
-                });
-
-            modelBuilder.Entity("AccesoDatos.Data.LibroPedidosDetalle", b =>
-                {
-                    b.HasOne("AccesoDatos.Data.Libro", "Libro")
-                        .WithMany()
                         .HasForeignKey("LibroId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
