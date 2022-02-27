@@ -1,0 +1,39 @@
+﻿@page "/login"
+
+<div class="py-4 mt-4">
+    <div class="col-md-4 m-auto border py-4">
+        <h3 class="col-12 text-primary text-center py-2">
+            <strong>Login</strong>
+        </h3>
+
+        <EditForm Model="UsuarioFormAutenticacion" OnValidSubmit="LoginUsuario">
+            <DataAnnotationsValidator></DataAnnotationsValidator>
+
+            @if (MostrarAutenticacionErrores)
+            {
+                <p class="text-center text-danger">@Errores</p> 
+            }
+
+            <InputText @bind-Value="UsuarioFormAutenticacion.UserName" id="email" placeholder="Email..." class="form-control mb-2" />
+            <ValidationMessage For="() => UsuarioFormAutenticacion.UserName"></ValidationMessage>
+            <InputText @bind-Value="UsuarioFormAutenticacion.Password" type="password" placeholder="Password..." id="password" class="form-control mb-2" />
+            <ValidationMessage For="() => UsuarioFormAutenticacion.Password"></ValidationMessage>
+
+            @if (EstaProcesando)
+            {
+                <button type="submit" class="btn btn-success btn-block disabled"><i class="fas fa-sign-in-alt"></i> Espere...</button>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-success btn-block"><i class="fas fa-sign-in-alt"></i> Iniciar Sesion</button>
+            }
+
+            <a href="/registro"
+               class="btn btn-primary btn-block text-white mt-3"><i class="fas fa-user-plus"></i> Registrar Nuevo Usuario</a>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+
+}

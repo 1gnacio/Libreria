@@ -45,8 +45,6 @@ namespace TiendaProductoCliente.Service
 
         public async Task<LibroPedidosDetalleDto> SaveLibroPedidosDetalle(LibroPedidosDetalleDto detalles)
         {
-            detalles.UserId = "usuario ficticio";
-
             var contenido = JsonConvert.SerializeObject(detalles);
 
             var bodyContenido = new StringContent(contenido, Encoding.UTF8, "application/json");

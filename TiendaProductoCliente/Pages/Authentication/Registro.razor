@@ -1,0 +1,77 @@
+﻿@page "/registro"
+
+
+<EditForm Model="UsuarioFormRegistro" OnValidSubmit="RegistrarUsuario" class="pt-4">
+    <DataAnnotationsValidator></DataAnnotationsValidator>
+    <div class="py-4">
+        <div class=" row form-group ">
+            <div class="col-6 offset-3 ">
+                <div class="card border">
+                    <div class="card-body px-lg-5 pt-4">
+                        <h3 class="col-12 text-primary text-center py-2">
+                            <strong>Registrarse</strong>
+                        </h3>
+
+                        @if (MostrarRegistroErrores)
+                        {
+                            <div>
+                                @foreach(var error in Errores)
+                                {
+                                    <p class="text-danger text-center">@error</p>
+                                }
+                            </div>
+                        }
+
+                        <hr style="background-color:aliceblue" />
+                        <div class="py-2">
+                            <InputText @bind-Value="UsuarioFormRegistro.Name" class="form-control" placeholder="Nombre..." />
+                            <ValidationMessage For="() => UsuarioFormRegistro.Name"></ValidationMessage>
+                        </div>
+                        <div class="py-2">
+                            <InputText @bind-Value="UsuarioFormRegistro.Email" class="form-control" placeholder="Email..." />
+                            <ValidationMessage For="() => UsuarioFormRegistro.Email"></ValidationMessage>
+                        </div>
+                        <div class="py-2 input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"> +1</span>
+                            </div>
+                            <InputText @bind-Value="UsuarioFormRegistro.PhoneNo" class="form-control" placeholder="Telefono..." />
+                            <ValidationMessage For="() => UsuarioFormRegistro.PhoneNo"></ValidationMessage>
+                        </div>
+                        <div class="form-row py-2">
+                            <div class="col">
+                                <InputText @bind-Value="UsuarioFormRegistro.Password" type="password" id="password" placeholder="Password..." class="form-control" />
+                                <ValidationMessage For="() => UsuarioFormRegistro.Password"></ValidationMessage>
+                            </div>
+                            <div class="col">
+                                <InputText @bind-Value="UsuarioFormRegistro.ConfirmPassword" type="password" id="confirm" class="form-control" placeholder="Confirmar Password..." />
+                                <ValidationMessage For="() => UsuarioFormRegistro.ConfirmPassword"></ValidationMessage>
+                            </div>
+
+                        </div>
+                        <hr style="background-color:aliceblue" />
+                        <div class="py-2">
+                            @if (EstaProcesando)
+                            {
+                                <button type="submit" class="btn btn-success btn-block disabled"><i class="fas fa-sign-in-alt"></i> Espere...</button>
+                            }
+                            else
+                            {
+                                <button type="submit" class="btn btn-success btn-block"><i class="fas fa-sign-in-alt"></i> Registrar</button>
+                            }
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</EditForm>
+
+@code {
+    
+}

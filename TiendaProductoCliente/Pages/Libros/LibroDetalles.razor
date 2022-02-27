@@ -4,6 +4,8 @@
 @inject IStripePagoService stripePagoService
 @inject ILibroPedidosDetalleService libroPedidosDetalleService
 @inject ILocalStorageService localStorage
+@using Microsoft.AspNetCore.Authorization 
+@attribute [Authorize(Roles = SD.RoleCliente)]
 
 @if (LibroCompra?.PedidosDetalles?.LibroDto?.LibroImagen == null)
 {
@@ -104,6 +106,17 @@ else
             if(Id != null)
             {
                 LibroCompra.PedidosDetalles.LibroDto = await LibroService.GetLibroDetalles(Id.Value);
+            }
+
+            if (await localStorage.GetItemAsync<UsuarioDto>(SD.Local_UserDetails) != null)
+            {
+                var userInfo = await localStorage.GetItemAsync<UsuarioDto>(SD.Local_UserDetails);
+
+                LibroCompra.PedidosDetalles.UserId = userInfo.Id;
+                LibroCompra.PedidosDetalles.Nombre = userInfo.Name;
+                LibroCompra.PedidosDetalles.Email = userInfo.Email;
+                LibroCompra.PedidosDetalles.Phone = userInfo.PhoneNo;
+
             }
         }
         catch (Exception e)

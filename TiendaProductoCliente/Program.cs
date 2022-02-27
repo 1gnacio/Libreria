@@ -1,4 +1,5 @@
 using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,9 +23,15 @@ namespace TiendaProductoCliente
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.Configuration.GetValue<string>("BaseAPIUrl")) });
             builder.Services.AddBlazoredLocalStorage();
+
+            builder.Services.AddAuthorizationCore();
+            builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
+
             builder.Services.AddScoped<ILibroService, LibroService>();
             builder.Services.AddScoped<ILibroPedidosDetalleService, LibroPedidosDetalleService>();
             builder.Services.AddScoped<IStripePagoService, StripePagoService>();
+
+            builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
             await builder.Build().RunAsync();
         }
     }
