@@ -1,6 +1,9 @@
 ﻿@page "/tienda/libro-detalles/{Id:int}"
 @inject IJSRuntime jsRuntime
 @inject ILibroService LibroService
+@inject IStripePagoService stripePagoService
+@inject ILibroPedidosDetalleService libroPedidosDetalleService
+@inject ILocalStorageService localStorage
 
 @if (LibroCompra?.PedidosDetalles?.LibroDto?.LibroImagen == null)
 {
@@ -115,6 +118,33 @@ else
         if (!await HandleValidacion())
         {
             return;
+        }
+
+        try
+        {
+            var pagoDto = new StripePagoDto()
+            {
+                Monto = Convert.ToInt32(LibroCompra.PedidosDetalles.LibroDto.PrecioRegular * 100),
+                ProductoNombre = LibroCompra.PedidosDetalles.LibroDto.Nombre,
+                ReturnUrl = "/tienda/libro-detalles/" + Id
+            };
+
+            var resultado = await stripePagoService.Checkout(pagoDto);
+
+            LibroCompra.PedidosDetalles.StripeSessionId = resultado.Data.ToString();
+            LibroCompra.PedidosDetalles.LibroId = LibroCompra.PedidosDetalles.LibroDto.Id;
+            LibroCompra.PedidosDetalles.CostoTotal = LibroCompra.PedidosDetalles.LibroDto.PrecioRegular;
+
+            var libroPedidosDetalleSaved = await libroPedidosDetalleService.SaveLibroPedidosDetalle(LibroCompra.PedidosDetalles);
+
+            await localStorage.SetItemAsync(SD.Local_LibroPedidoDetalles, libroPedidosDetalleSaved);
+
+            await jsRuntime.InvokeVoidAsync("redirectToCheckout", resultado.Data.ToString());
+        }
+        catch (Exception e)
+        {
+
+            await jsRuntime.ToastrError(e.Message);
         }
     }
 

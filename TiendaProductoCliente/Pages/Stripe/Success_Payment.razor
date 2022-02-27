@@ -1,0 +1,47 @@
+﻿@page "/success-payment"
+@inject ILocalStorageService localStorage
+@inject ILibroPedidosDetalleService libroPedidoDetalleService
+
+<div class="container">
+    @if (!PagoCompleto)
+    {
+        <div style="position: fixed; top: 50%; left: 50%; margin-top: -50px; margin-right: -100px">
+            <img src="images/ajax-loader.gif" />
+        </div>
+    }
+    else
+    {
+        <div class="row mt-4 pt-4">
+            <div class="col-10 offset-1 text-center">
+                <h2 class="text-primary">Compra Confirmada</h2>
+                <p>Su libro a sido comprado correctamente con el Id del pedido @PedidoId</p>
+            </div>
+            <div class="col-8 offset-2">
+                <img src="/images/confirmacion.png" width="100%" style="border-radius:30px;" />
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private bool PagoCompleto { get; set; }
+    private int PedidoId { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        var pedidosDetalles = await localStorage.GetItemAsync<LibroPedidosDetalleDto>
+        (SD.Local_LibroPedidoDetalles);
+
+        PedidoId = pedidosDetalles.Id;
+
+        var finalLibroPedidosDetalle = await libroPedidoDetalleService.MarcarPagoExitoso
+            (pedidosDetalles);
+
+        if (finalLibroPedidosDetalle.Status == SD.Status_Pagado)
+        {
+            await localStorage.RemoveItemAsync(SD.Local_LibroPedidoDetalles);
+            await localStorage.RemoveItemAsync(SD.Local_AutorInicial);
+            PagoCompleto = true;
+        }
+    }
+}

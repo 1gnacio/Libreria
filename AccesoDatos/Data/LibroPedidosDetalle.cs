@@ -19,7 +19,7 @@ namespace AccesoDatos.Data
         public string StripeSessionId { get; set; }
 
         [Required]
-        public long CostoTotal { get; set; }
+        public double CostoTotal { get; set; }
 
         [Required]
         public int LibroId { get; set; }

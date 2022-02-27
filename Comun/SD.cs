@@ -12,7 +12,10 @@ namespace Comun
         public const string RoleCliente = "Cliente";
         public const string RoleEmpleado = "Empleado";
         public const string Local_AutorInicial = "AutorLibroInicial";
+        public const string Local_LibroPedidoDetalles = "LibroPedidoDetalles";
         public const string Status_Pendiente = "Pendiente";
         public const string Status_Cancelado = "Cancelado";
+        public const string Status_Pagado = "Pagado";
+
     }
 }

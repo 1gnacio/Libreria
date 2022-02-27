@@ -82,9 +82,29 @@ namespace Negocios.Repositorio
             }
         }
 
-        public Task<LibroPedidosDetalleDto> MarcarPagoExitoso(int id)
+        public async Task<LibroPedidosDetalleDto> MarcarPagoExitoso(int id)
         {
-            throw new NotImplementedException();
+            var data = await _db.LibroPedidosDetalle.FindAsync(id);
+
+            if (data == null)
+            {
+                return null;
+            }
+
+            if (!data.PagoRealizado)
+            {
+                data.PagoRealizado = true;
+                data.Status = SD.Status_Pagado;
+
+                var marcarPagoExitoso = _db.LibroPedidosDetalle.Update(data);
+
+                await _db.SaveChangesAsync();
+
+                return _mapper.Map<LibroPedidosDetalle, LibroPedidosDetalleDto>
+                    (marcarPagoExitoso.Entity);
+            }
+
+            return new LibroPedidosDetalleDto();
         }
     }
 }
